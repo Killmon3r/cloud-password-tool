@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #60a5fa;
+        }
+
+        .card {
+            background: #111827;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .label {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .value {
+            font-size: 18px;
+            margin-top: 5px;
+        }
+
+        .status-safe {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .status-bad {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #1f2937;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .header-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header-box">
+            <h1>Security Dashboard</h1>
+            <div class="subtitle">Account Monitoring & Breach Status</div>
+        </div>
+
+        <!-- USER INFO -->
+        <div class="card">
+            <div class="label">Email</div>
+            <div class="value" id="email">Loading...</div>
+        </div>
+
+        <div class="card">
+            <div class="label">Account Status</div>
+            <div class="value" id="status">Loading...</div>
+        </div>
+
+        <!-- BREACH LOGS -->
+        <div class="card">
+            <div class="label">Breach Logs</div>
+            <ul id="logs"></ul>
+        </div>
+
+    </div>
+
+    <script>
+        async function loadDashboard() {
+
+            const params = new URLSearchParams(window.location.search);
+            const email = params.get("email");
+
+            if (!email) {
+                document.getElementById("email").innerText = "No user detected";
+                document.getElementById("status").innerText = "Unknown";
+                return;
+            }
+
+            const response = await fetch(`/dashboard?email=${email}`);
+            const data = await response.json();
+
+            // EMAIL
+            document.getElementById("email").innerText = data.user.email;
+
+            // STATUS
+            const statusEl = document.getElementById("status");
+
+            if (data.user.force_password_reset) {
+                statusEl.innerText = "COMPROMISED ⚠️";
+                statusEl.className = "value status-bad";
+            } else {
+                statusEl.innerText = "SAFE ✅";
+                statusEl.className = "value status-safe";
+            }
+
+            // LOGS
+            const logsList = document.getElementById("logs");
+            logsList.innerHTML = "";
+
+            if (data.breach_logs.length === 0) {
+                logsList.innerHTML = "<li>No breach history found</li>";
+            } else {
+                data.breach_logs.forEach(log => {
+                    const li = document.createElement("li");
+                    li.innerText = `Breached ${log.breach_count} times • ${log.created_at}`;
+                    logsList.appendChild(li);
+                });
+            }
+        }
+
+        loadDashboard();
+    </script>
+
+</body>
+
+</html>
