@@ -1,0 +1,9 @@
+flask
+mysql-connector-python
+bcrypt
+requests
+apscheduler
+pyotp
+python-dotenv
+gunicorn
+psycopg2-binary
