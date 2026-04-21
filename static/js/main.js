@@ -4,7 +4,7 @@ const BASE_URL = "https://cloud-password-tool.onrender.com";
 // ================= REGISTER =================
 window.register = async function () {
 
-    alert("register clicked");
+   
 
     const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
