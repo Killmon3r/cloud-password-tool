@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import os
 from dotenv import load_dotenv
 
+from flask_cors import CORS  # ✅ ADDED
 from routes.users import auth_bp
 
 import smtplib
@@ -11,11 +12,15 @@ load_dotenv()
 
 app = Flask(__name__)
 
+# ===== ENABLE CORS (IMPORTANT FOR RENDER FRONTEND) =====
+CORS(app)  # ✅ ADDED
+
+
 # ===== REGISTER BLUEPRINT =====
 app.register_blueprint(auth_bp)
 
 
-# ===== HOME ROUTE (IMPORTANT FOR RENDER) =====
+# ===== HOME ROUTE (RENDER ENTRY POINT) =====
 @app.route("/")
 def home():
     return render_template("login.html")
