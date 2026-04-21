@@ -39,6 +39,22 @@
             color: white;
         }
 
+        .password-box {
+            position: relative;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #60a5fa;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
         button {
             width: 100%;
             padding: 10px;
@@ -76,14 +92,26 @@
     <h2>Login</h2>
 
     <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+
+    <div class="password-box">
+        <input id="password" type="password" placeholder="Password">
+        <button class="toggle-btn" type="button" onclick="togglePassword()">👁</button>
+    </div>
 
     <button onclick="login()">Login</button>
 
     <div id="result"></div>
 
+    <a href="/reset-page">Forgot Password?</a>
     <a href="/register-page">Create account</a>
 </div>
+
+<script>
+function togglePassword() {
+    const field = document.getElementById("password");
+    field.type = field.type === "password" ? "text" : "password";
+}
+</script>
 
 <script src="/static/js/main.js"></script>
 
