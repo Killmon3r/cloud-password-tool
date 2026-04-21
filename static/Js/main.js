@@ -1,51 +1,65 @@
-const BASE_URL = "http://127.0.0.1:5000";
+const BASE_URL = "http://127.0.0.1:10000";
 
-// ===== REGISTER =====
-async function register() {
+
+// ================= REGISTER =================
+window.register = async function () {
+
+    alert("register clicked");
+
     const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    const res = await fetch(`${BASE_URL}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password })
-    });
+    try {
+        const res = await fetch(`${BASE_URL}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    document.getElementById("result").innerText = JSON.stringify(data);
+        document.getElementById("result").innerText =
+            data.message || data.error;
 
-    // ✅ Redirect to login page after successful registration
-    if (data.message) {
-        window.location.href = "/login-page";
+        if (res.ok) {
+            window.location.href = "/login-page";
+        }
+
+    } catch (err) {
+        console.log("Register error:", err);
+        alert("Server not responding");
     }
-}
+};
 
 
-// ===== LOGIN =====
-async function login() {
+// ================= LOGIN =================
+window.login = async function () {
+
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const otp = document.getElementById("otp").value;
+    const otpField = document.getElementById("otp");
+    const otp = otpField ? otpField.value : null;
 
-    const res = await fetch(`${BASE_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, otp })
-    });
+    try {
+        const res = await fetch(`${BASE_URL}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, otp })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    // ⚠️ HANDLE PASSWORD RESET CASE
-    if (data.error === "Password reset required") {
-        alert("Your password was breached. Please reset it.");
+        document.getElementById("result").innerText =
+            data.message || data.error;
+
+        if (res.ok) {
+            window.location.href =
+                `/dashboard-page?email=${encodeURIComponent(email)}`;
+        }
+
+    } catch (err) {
+        console.log("Login error:", err);
+        alert("Server not responding");
     }
-
-    document.getElementById("result").innerText = JSON.stringify(data);
-
-    // ✅ Redirect to dashboard on successful login
-    if (data.message) {
-        window.location.href = `/dashboard-page?email=${encodeURIComponent(email)}`;
-    }
-}
+};
