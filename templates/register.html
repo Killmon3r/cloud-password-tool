@@ -1,84 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8" />
     <title>Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            width: 400px;
+            background: #111827;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        h2 {
+            text-align: center;
+            color: #60a5fa;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: none;
+            background: #1f2937;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #22c55e;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #16a34a;
+        }
+
+        a {
+            color: #60a5fa;
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-    <div class="container mt-5">
+<div class="card">
+    <h2>Create Account</h2>
 
-        <div class="card p-4 shadow">
+    <input id="username" placeholder="Username">
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
-            <h2 class="text-center mb-4">Register</h2>
+    <button onclick="register()">Register</button>
 
-            <input class="form-control mb-3" type="text" id="username" placeholder="Username">
-            <input class="form-control mb-3" type="email" id="email" placeholder="Email">
+    <div id="result"></div>
 
-            <div class="input-group mb-3">
-                <input class="form-control" type="password" id="password" placeholder="Password"
-                    oninput="checkStrength()">
-                <button class="btn btn-outline-secondary" onclick="togglePassword()">👁</button>
-            </div>
+    <a href="/login-page">Already have an account? Login</a>
+</div>
 
-            <div class="progress mb-2">
-                <div id="strengthBar" class="progress-bar"></div>
-            </div>
-
-            <p id="strengthText"></p>
-
-            <button class="btn btn-success w-100" onclick="register()">Register</button>
-
-            <p id="result" class="mt-3 text-center"></p>
-
-            <div class="text-center mt-3">
-                <a href="/login-page">Already have an account? Login</a>
-            </div>
-
-        </div>
-
-    </div>
-
-    <script>
-        function togglePassword() {
-            let field = document.getElementById("password");
-            field.type = field.type === "password" ? "text" : "password";
-        }
-
-        function checkStrength() {
-            let password = document.getElementById("password").value;
-            let strength = 0;
-
-            if (password.length >= 8) strength++;
-            if (/[A-Z]/.test(password)) strength++;
-            if (/[a-z]/.test(password)) strength++;
-            if (/[0-9]/.test(password)) strength++;
-            if (/[!@#$%^&*()_+]/.test(password)) strength++;
-
-            let bar = document.getElementById("strengthBar");
-            let text = document.getElementById("strengthText");
-
-            let width = (strength / 5) * 100;
-            bar.style.width = width + "%";
-
-            if (strength <= 2) {
-                bar.className = "progress-bar bg-danger";
-                text.innerText = "Weak Password";
-            } else if (strength <= 4) {
-                bar.className = "progress-bar bg-warning";
-                text.innerText = "Medium Password";
-            } else {
-                bar.className = "progress-bar bg-success";
-                text.innerText = "Strong Password";
-            }
-        }
-    </script>
-
-    <!-- IMPORTANT: correct Flask static path -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="/static/js/main.js"></script>
 
 </body>
-
 </html>
