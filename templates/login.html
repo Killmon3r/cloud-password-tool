@@ -1,48 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8" />
     <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            width: 400px;
+            background: #111827;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        h2 {
+            text-align: center;
+            color: #60a5fa;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: none;
+            background: #1f2937;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        a {
+            color: #60a5fa;
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-    <div class="container mt-5">
+<div class="card">
+    <h2>Login</h2>
 
-        <div class="card p-4 shadow">
-            <h2 class="text-center mb-4">Login</h2>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
-            <input class="form-control mb-3" type="email" id="email" placeholder="Email">
+    <button onclick="login()">Login</button>
 
-            <div class="input-group mb-3">
-                <input class="form-control" type="password" id="password" placeholder="Password">
-                <button class="btn btn-outline-secondary" onclick="togglePassword()">👁</button>
-            </div>
+    <div id="result"></div>
 
-            <input class="form-control mb-3" type="text" id="otp" placeholder="OTP (if MFA enabled)">
+    <a href="/register-page">Create account</a>
+</div>
 
-            <button class="btn btn-primary w-100" onclick="login()">Login</button>
-
-            <p id="result" class="mt-3 text-center"></p>
-
-            <div class="text-center mt-3">
-                <a href="/register-page">Register</a> |
-                <a href="/reset-page">Forgot Password?</a>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        function togglePassword() {
-            let field = document.getElementById("password");
-            field.type = field.type === "password" ? "text" : "password";
-        }
-    </script>
-
-    <script src="/static/js/main.js"></script>
+<script src="/static/js/main.js"></script>
 
 </body>
-
 </html>
