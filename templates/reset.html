@@ -39,7 +39,22 @@
             color: white;
         }
 
-        button {
+        .small-btn {
+            width: 60px;
+            padding: 6px;
+            font-size: 12px;
+            background: #374151;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .small-btn:hover {
+            background: #4b5563;
+        }
+
+        button.main-btn {
             width: 100%;
             padding: 10px;
             background: #ef4444;
@@ -50,43 +65,8 @@
             margin-top: 10px;
         }
 
-        button:hover {
+        button.main-btn:hover {
             background: #dc2626;
-        }
-
-        .password-wrapper {
-            position: relative;
-        }
-
-        .password-wrapper input {
-            padding-right: 45px;
-        }
-
-        .toggle-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            color: #60a5fa;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        #result {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #94a3b8;
-        }
-
-        a {
-            display: block;
-            text-align: center;
-            margin-top: 10px;
-            color: #60a5fa;
-            text-decoration: none;
         }
     </style>
 </head>
@@ -97,37 +77,31 @@
     <h2>Reset Password</h2>
 
     <input id="token" placeholder="Reset token">
+    <input id="new_password" type="password" placeholder="New password">
 
-    <div class="password-wrapper">
-        <input id="new_password" type="password" placeholder="New password">
-        <button type="button" class="toggle-btn" onclick="togglePassword()">👁</button>
-    </div>
+    <!-- 👁 TOGGLE ABOVE MAIN BUTTON -->
+    <button class="small-btn" onclick="togglePassword('new_password')">👁 Show</button>
 
-    <button onclick="resetPassword()">Reset Password</button>
-
-    <div id="result"></div>
-
-    <a href="/login-page">Back to Login</a>
+    <button class="main-btn" onclick="resetPassword()">Reset Password</button>
 </div>
 
 <script>
-function togglePassword() {
-    const field = document.getElementById("new_password");
+function togglePassword(id) {
+    const field = document.getElementById(id);
     field.type = field.type === "password" ? "text" : "password";
 }
 
-async function resetPassword() {
-    const res = await fetch("https://cloud-password-tool.onrender.com/reset-password", {
+function resetPassword() {
+    fetch("https://cloud-password-tool.onrender.com/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             token: document.getElementById("token").value,
             new_password: document.getElementById("new_password").value
         })
-    });
-
-    const data = await res.json();
-    document.getElementById("result").innerText = data.message || data.error;
+    })
+    .then(res => res.json())
+    .then(data => alert(data.message || data.error))
 }
 </script>
 
