@@ -62,7 +62,7 @@ def register():
     return flask.jsonify({"message": "User registered"}), 201
 
 
-# ===== LOGIN =====
+# ===== LOGIN (FIXED - NO MORE 500 ERROR) =====
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = flask.request.json
@@ -70,36 +70,50 @@ def login():
     password = data.get('password')
     otp = data.get('otp')
 
+    if not email or not password:
+        return flask.jsonify({"error": "Email and password required"}), 400
+
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-    user = cursor.fetchone()
 
-    if not user:
-        return flask.jsonify({"error": "User not found"}), 404
+    try:
+        cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+        user = cursor.fetchone()
 
-    columns = [desc[0] for desc in cursor.description]
-    user = dict(zip(columns, user))
+        # ✅ FIX: handle missing user safely
+        if not user:
+            return flask.jsonify({"error": "User not found"}), 404
 
-    if user.get("force_password_reset"):
-        return flask.jsonify({
-            "error": "Password compromised. Reset required."
-        }), 403
+        columns = [desc[0] for desc in cursor.description]
+        user = dict(zip(columns, user))
 
-    stored_hash = user['password_hash'].encode()
+        if user.get("force_password_reset"):
+            return flask.jsonify({
+                "error": "Password compromised. Reset required."
+            }), 403
 
-    if not bcrypt.checkpw(password.encode(), stored_hash):
-        return flask.jsonify({"error": "Incorrect password"}), 401
+        stored_hash = user['password_hash'].encode()
 
-    if user.get('mfa_enabled'):
-        if not otp:
-            return flask.jsonify({"error": "OTP required"}), 401
+        if not bcrypt.checkpw(password.encode(), stored_hash):
+            return flask.jsonify({"error": "Incorrect password"}), 401
 
-        totp = pyotp.TOTP(user['mfa_secret'])
-        if not totp.verify(otp):
-            return flask.jsonify({"error": "Invalid OTP"}), 401
+        if user.get('mfa_enabled'):
+            if not otp:
+                return flask.jsonify({"error": "OTP required"}), 401
 
-    return flask.jsonify({"message": "Login successful"})
+            totp = pyotp.TOTP(user['mfa_secret'])
+            if not totp.verify(otp):
+                return flask.jsonify({"error": "Invalid OTP"}), 401
+
+        return flask.jsonify({"message": "Login successful"}), 200
+
+    except Exception as e:
+        print("LOGIN ERROR:", e)
+        return flask.jsonify({"error": "Server error"}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
 
 
 # ===== REQUEST RESET =====
