@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:10000";
+const BASE_URL = "https://cloud-password-tool.onrender.com";
 
 
 // ================= REGISTER =================
