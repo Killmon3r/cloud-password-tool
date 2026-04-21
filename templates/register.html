@@ -39,31 +39,22 @@
             color: white;
         }
 
-        .password-box {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .password-box input {
-            flex: 1;
-        }
-
-        .toggle-btn {
-            width: 42px;
-            height: 38px;
+        .small-btn {
+            width: 60px;
+            padding: 6px;
+            font-size: 12px;
+            background: #374151;
             border: none;
             border-radius: 6px;
-            background: #374151;
             color: white;
             cursor: pointer;
         }
 
-        .toggle-btn:hover {
+        .small-btn:hover {
             background: #4b5563;
         }
 
-        button.register-btn {
+        button.main-btn {
             width: 100%;
             padding: 10px;
             background: #22c55e;
@@ -74,7 +65,7 @@
             margin-top: 10px;
         }
 
-        button.register-btn:hover {
+        button.main-btn:hover {
             background: #16a34a;
         }
 
@@ -89,7 +80,6 @@
         #result {
             text-align: center;
             margin-top: 10px;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -101,13 +91,12 @@
 
     <input id="username" placeholder="Username">
     <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
-    <div class="password-box">
-        <input id="password" type="password" placeholder="Password">
-        <button class="toggle-btn" onclick="togglePassword('password')">👁</button>
-    </div>
+    <!-- 👁 TOGGLE ABOVE MAIN BUTTON -->
+    <button class="small-btn" onclick="togglePassword('password')">👁 Show</button>
 
-    <button class="register-btn" onclick="register()">Register</button>
+    <button class="main-btn" onclick="register()">Register</button>
 
     <div id="result"></div>
 
