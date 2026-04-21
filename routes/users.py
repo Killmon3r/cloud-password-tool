@@ -62,7 +62,7 @@ def register():
     return flask.jsonify({"message": "User registered"}), 201
 
 
-# ===== LOGIN (FIXED - NO MORE 500 ERROR) =====
+# ===== LOGIN (FIXED MEMORYVIEW BUG) =====
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = flask.request.json
@@ -80,7 +80,6 @@ def login():
         cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cursor.fetchone()
 
-        # ✅ FIX: handle missing user safely
         if not user:
             return flask.jsonify({"error": "User not found"}), 404
 
@@ -92,7 +91,12 @@ def login():
                 "error": "Password compromised. Reset required."
             }), 403
 
-        stored_hash = user['password_hash'].encode()
+        # 🔥 FIX: handle memoryview / bytes safely
+        stored_hash = user['password_hash']
+        if isinstance(stored_hash, memoryview):
+            stored_hash = stored_hash.tobytes()
+        elif isinstance(stored_hash, str):
+            stored_hash = stored_hash.encode()
 
         if not bcrypt.checkpw(password.encode(), stored_hash):
             return flask.jsonify({"error": "Incorrect password"}), 401
