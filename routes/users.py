@@ -62,7 +62,7 @@ def register():
     return flask.jsonify({"message": "User registered"}), 201
 
 
-# ===== LOGIN (FIXED MEMORYVIEW BUG) =====
+# ===== LOGIN =====
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = flask.request.json
@@ -91,8 +91,8 @@ def login():
                 "error": "Password compromised. Reset required."
             }), 403
 
-        # 🔥 FIX: handle memoryview / bytes safely
         stored_hash = user['password_hash']
+
         if isinstance(stored_hash, memoryview):
             stored_hash = stored_hash.tobytes()
         elif isinstance(stored_hash, str):
@@ -118,6 +118,41 @@ def login():
     finally:
         cursor.close()
         conn.close()
+
+
+# ===== DASHBOARD (🔥 FIXED MISSING ROUTE) =====
+@auth_bp.route('/dashboard', methods=['GET'])
+def dashboard():
+    email = flask.request.args.get('email')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT username, email, force_password_reset
+        FROM users
+        WHERE email=%s
+    """, (email,))
+
+    user = cursor.fetchone()
+
+    if not user:
+        return flask.jsonify({"error": "User not found"}), 404
+
+    columns = [desc[0] for desc in cursor.description]
+    user = dict(zip(columns, user))
+
+    breach_logs = [
+        {
+            "breach_count": 0,
+            "created_at": "No breach history yet"
+        }
+    ]
+
+    return flask.jsonify({
+        "user": user,
+        "breach_logs": breach_logs
+    })
 
 
 # ===== REQUEST RESET =====
